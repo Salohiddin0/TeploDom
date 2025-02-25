@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import logo from '../assets/navbar/logo.svg'
 import { Link, useNavigate } from 'react-router-dom'
 import closeIcon from '../assets/modal/close.svg'
@@ -8,10 +8,16 @@ import { delModals } from '../features/modal/modalSlice'
 const Sidebar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [isClosing, setIsClosing] = useState(false) // Animatsiya uchun state
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsOpen(true)
+    }, 10)
+  }, [])
 
   const handleClose = path => {
-    setIsClosing(true)
+    setIsOpen(false)
     setTimeout(() => {
       dispatch(delModals())
       navigate(path)
@@ -22,13 +28,13 @@ const Sidebar = () => {
     <aside
       onClick={() => handleClose('/')}
       className={`fixed top-0 left-0 z-[99] h-full w-full transition-opacity duration-500 
-      ${isClosing ? 'opacity-0' : 'opacity-100'} 
-      bg-black/50 backdrop-blur-sm`} // Orqa fon qorayadi + xiralashadi
+      ${isOpen ? 'opacity-100' : 'opacity-0'} 
+      bg-black/50 backdrop-blur-sm`}
     >
       <div
         onClick={e => e.stopPropagation()}
         className={`h-full w-4/5 bg-white px-[15px] py-[20px] rounded-r-lg transition-transform duration-500 
-        ${isClosing ? '-translate-x-full' : 'translate-x-0'}`}
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}`} // Sekin ochilib-yopiladi
       >
         <div className='flex justify-between items-center'>
           <Link
@@ -47,9 +53,11 @@ const Sidebar = () => {
           </Link>
           <button
             onClick={() => handleClose('/')}
-            className='p-3 rounded-full bg-[#F7F7F7] cursor-pointer'
+            className='relative w-10 h-10 flex items-center justify-center bg-[#F7F7F7] rounded-full 
+            transition-all duration-500 ease-in-out hover:rotate-[135deg] hover:scale-110 active:scale-95'
           >
-            <img src={closeIcon} alt='close icon' className='scale-110' />
+            <span className='absolute w-6 h-0.5 bg-black transition-all duration-500 ease-in-out rotate-45 hover:w-7'></span>
+            <span className='absolute w-6 h-0.5 bg-black transition-all duration-500 ease-in-out -rotate-45 hover:w-7'></span>
           </button>
         </div>
         <ul className='flex flex-col divide-y divide-black mt-5'>
